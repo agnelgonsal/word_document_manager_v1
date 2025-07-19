@@ -1,3 +1,4 @@
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -71,3 +72,11 @@ def upload_doc(file: UploadFile = File(...)):
         f.write(file.file.read())
     documents[doc_id] = {"name": file.filename, "path": path}
     return RedirectResponse(url="/", status_code=303)
+
+@app.get("/documents/{doc_id}/download")
+def download_doc(doc_id: str):
+    meta = documents.get(doc_id)
+    if not meta:
+        return JSONResponse(status_code=404, content={"error": "not found"})
+    filename = meta["name"] if meta["name"].endswith(".docx") else meta["name"] + ".docx"
+    return FileResponse(meta["path"], media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document", filename=filename)
