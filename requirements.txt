@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+python-multipart
+mammoth
+python-docx
+jinja2
