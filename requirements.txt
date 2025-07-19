@@ -4,3 +4,5 @@ python-multipart
 mammoth
 python-docx
 jinja2
+html2docx
+beautifulsoup4
