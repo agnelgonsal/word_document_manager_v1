@@ -3,11 +3,32 @@
 <head>
 <meta charset="utf-8"/>
 <title>Word Document Manager</title>
+<script src="https://cdn.tiny.cloud/1/lzbhjhx7fy0mwpej5uj7jsxw1q9ilog3or9zst4spj6dtk58/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+  tinymce.init({
+    selector: 'textarea[name="content"]',
+    height: 400,
+    menubar: true,
+    plugins: [
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
+    ],
+    toolbar:
+      'undo redo | formatselect | bold italic underline backcolor | \
+      alignleft aligncenter alignright alignjustify | \
+      bullist numlist outdent indent | removeformat | help'
+  });
+</script>
 <style>
- body { font-family: Arial, sans-serif; margin: 2em; }
- input, textarea { width: 100%; margin-bottom: 0.5em; padding: 0.5em; }
- button { padding: 0.5em 1em; margin-right: 0.5em; }
- .doc-item { border: 1px solid #ccc; padding: 0.5em; margin-bottom: 0.5em; }
+ body { font-family: Arial, sans-serif; margin: 2em; background: #f7f9fc; }
+ h1 { color: #333; }
+ input[type=text], input[type=file] { width: 100%; margin-bottom: 0.5em; padding: 0.5em; border: 1px solid #ccc; border-radius: 4px; }
+ button { padding: 0.5em 1em; margin-top: 0.5em; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+ button:hover { background: #0056b3; }
+ .doc-item { background:#fff; border: 1px solid #ddd; padding: 0.75em; margin-bottom: 0.5em; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+ a { color: #007bff; text-decoration: none; margin-right: 0.5em; }
+ a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -17,31 +38,32 @@
 <h2>Edit Document</h2>
 <form method="post" action="/documents/{{edit_id}}/update">
   <input type="text" name="name" value="{{edit_name}}" required />
-  <textarea name="content" rows="10">{{edit_content|safe}}</textarea>
-  <button type="submit">Update</button>
+  <textarea name="content">{{edit_content|safe}}</textarea>
+  <button type="submit">💾 Update</button>
   <a href="/">Cancel</a>
 </form>
 {% else %}
 <h2>Create New Document</h2>
 <form method="post" action="/documents">
   <input type="text" name="name" placeholder="Document name" required />
-  <textarea name="content" rows="5" placeholder="Enter content..."></textarea>
-  <button type="submit">Create</button>
+  <textarea name="content" placeholder="Start writing..."></textarea>
+  <button type="submit">➕ Create</button>
 </form>
 {% endif %}
 
 <h2>Upload Word Document</h2>
 <form method="post" action="/upload" enctype="multipart/form-data">
   <input type="file" name="file" required />
-  <button type="submit">Upload</button>
+  <button type="submit">⬆️ Upload</button>
 </form>
 
 <h2>Existing Documents</h2>
 {% for id, meta in documents.items() %}
 <div class="doc-item">
   <strong>{{meta.name}}</strong><br>
-  <a href="/documents/{{id}}">Edit</a> |
-  <a href="/documents/{{id}}/delete" onclick="return confirm('Delete?');">Delete</a>
+  <a href="/documents/{{id}}">✏️ Edit</a>
+  <a href="/documents/{{id}}/download">⬇️ Download</a>
+  <a href="/documents/{{id}}/delete" onclick="return confirm('Delete this document?');">🗑️ Delete</a>
 </div>
 {% else %}
 <p>No documents found.</p>
